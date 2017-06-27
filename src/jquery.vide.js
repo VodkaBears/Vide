@@ -171,6 +171,32 @@
   }
 
   /**
+   * Add extension if not in path
+   * @private
+   * @param {String} path
+   * @param {String} extension '.mp4'
+   * @returns {String}
+   */
+  function addExtensionIfNotInPath(path, extension) {
+
+    if (path.indexOf(extension) === -1) {
+      path = path + extension;
+    }
+
+    return path;
+  }
+
+  /**
+   * Remove extension in path
+   * @private
+   * @param {String} path
+   * @returns {String}
+   */
+  function removeExtension(path) {
+    return path.replace(/\.\w*$/, '');
+  }
+
+  /**
    * Vide constructor
    * @param {HTMLElement} element
    * @param {Object|String} path
@@ -194,11 +220,11 @@
 
     // Remove an extension
     if (typeof path === 'string') {
-      path = path.replace(/\.\w*$/, '');
+      path = removeExtension(path);
     } else if (typeof path === 'object') {
       for (var i in path) {
-        if (path.hasOwnProperty(i)) {
-          path[i] = path[i].replace(/\.\w*$/, '');
+        if (path.hasOwnProperty(i) && i === 'poster') {
+          path[i] = removeExtension(path[i]);
         }
       }
     }
@@ -258,11 +284,11 @@
         poster = path.poster;
       } else {
         if (path.mp4) {
-          poster = path.mp4;
+          poster = removeExtension(path.mp4);
         } else if (path.webm) {
-          poster = path.webm;
+          poster = removeExtension(path.webm);
         } else if (path.ogv) {
-          poster = path.ogv;
+          poster = removeExtension(path.ogv);
         }
       }
     }
@@ -285,15 +311,15 @@
 
     if (typeof path === 'object') {
       if (path.mp4) {
-        sources += '<source src="' + path.mp4 + '.mp4" type="video/mp4">';
+        sources += '<source src="' + addExtensionIfNotInPath(path.mp4, '.mp4') + '" type="video/mp4">';
       }
 
       if (path.webm) {
-        sources += '<source src="' + path.webm + '.webm" type="video/webm">';
+        sources += '<source src="' + addExtensionIfNotInPath(path.webm, '.webm') + '" type="video/webm">';
       }
 
       if (path.ogv) {
-        sources += '<source src="' + path.ogv + '.ogv" type="video/ogg">';
+        sources += '<source src="' + addExtensionIfNotInPath(path.ogv, '.ogv') + '" type="video/ogg">';
       }
 
       $video = vide.$video = $('<video>' + sources + '</video>');
